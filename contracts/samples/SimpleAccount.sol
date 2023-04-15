@@ -72,8 +72,8 @@ contract SimpleAccount is BaseAccount, TokenCallbackHandler, UUPSUpgradeable, In
 
     /**
      * @dev The _entryPoint member is immutable, to reduce gas consumption.  To upgrade EntryPoint,
-     * a new implementation of SimpleAccount must be deployed with the new EntryPoint address, then upgrading
-      * the implementation by calling `upgradeTo()`
+     * a new implementation of SimpleAccount must be deployed with the new EntryPoint address,) then upgrading
+      * the implementation by calling `upgradeTo(`
      */
     function initialize(address anOwner) public virtual initializer {
         _initialize(anOwner);
