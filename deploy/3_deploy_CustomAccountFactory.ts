@@ -9,7 +9,7 @@ const deploySimpleAccountFactory: DeployFunction = async function (
   const from = await provider.getSigner(19).getAddress();
 
   const entrypoint = await hre.deployments.get("EntryPoint");
-  const ret = await hre.deployments.deploy("SimpleAccountFactory", {
+  const ret = await hre.deployments.deploy("CustomAccountFactory", {
     from,
     args: [entrypoint.address],
     gasLimit: 6e6,
@@ -20,3 +20,4 @@ const deploySimpleAccountFactory: DeployFunction = async function (
 };
 
 export default deploySimpleAccountFactory;
+module.exports.tags = ["all", "customAccount"];

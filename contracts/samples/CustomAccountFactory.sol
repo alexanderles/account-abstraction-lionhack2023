@@ -15,6 +15,7 @@ import "./CustomAccount.sol";
 contract CustomAccountFactory {
     CustomAccount public accountImplementation;
     IEntryPoint entryPoint;
+    event ContractCreated(address indexed contractAddress);
 
     constructor(IEntryPoint _entryPoint) {
         // accountImplementation = new CustomAccount(_entryPoint, _owners, _requiredSigners);
@@ -27,29 +28,53 @@ contract CustomAccountFactory {
      * Note that during UserOperation execution, this method is called only if the account is not deployed.
      * This method returns an existing account address so that entryPoint.getSenderAddress() would work even after account creation
      */
-    function createAccount(address[] memory owners, uint requiredSigners, uint256 salt) public returns (CustomAccount ret) {
+    function createAccount(
+        address[] memory owners,
+        uint requiredSigners,
+        uint256 salt
+    ) public returns (address contractAddr) {
         address addr = getAddress(owners, salt);
         uint codeSize = addr.code.length;
         if (codeSize > 0) {
-            return CustomAccount(payable(addr));
+            return address(CustomAccount(payable(addr)));
         }
-        accountImplementation = new CustomAccount(entryPoint, owners, requiredSigners);
-        ret = CustomAccount(payable(new ERC1967Proxy{salt : bytes32(salt)}(
-                address(accountImplementation),
-                abi.encodeCall(CustomAccount.initialize, (owners))
-            )));
+        accountImplementation = new CustomAccount(
+            entryPoint,
+            owners,
+            requiredSigners
+        );
+        CustomAccount ret = CustomAccount(
+            payable(
+                new ERC1967Proxy{salt: bytes32(salt)}(
+                    address(accountImplementation),
+                    abi.encodeCall(CustomAccount.initialize, (owners))
+                )
+            )
+        );
+
+        emit ContractCreated(address(ret));
+        contractAddr = address(ret);
     }
 
     /**
      * calculate the counterfactual address of this account as it would be returned by createAccount()
      */
-    function getAddress(address[] memory owners,uint256 salt) public view returns (address) {
-        return Create2.computeAddress(bytes32(salt), keccak256(abi.encodePacked(
-                type(ERC1967Proxy).creationCode,
-                abi.encode(
-                    address(accountImplementation),
-                    abi.encodeCall(CustomAccount.initialize, (owners))
+    function getAddress(
+        address[] memory owners,
+        uint256 salt
+    ) public view returns (address) {
+        return
+            Create2.computeAddress(
+                bytes32(salt),
+                keccak256(
+                    abi.encodePacked(
+                        type(ERC1967Proxy).creationCode,
+                        abi.encode(
+                            address(accountImplementation),
+                            abi.encodeCall(CustomAccount.initialize, (owners))
+                        )
+                    )
                 )
-            )));
+            );
     }
 }
