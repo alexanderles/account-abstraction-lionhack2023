@@ -1,3 +1,5 @@
+const { ethers } = require("hardhat");
+
 async function main() {
   const contractAddress = "0xd3f39d2127E4221859a852DF8Adb15EF2f017929";
   const myContract = await hre.ethers.getContractAt(
@@ -15,9 +17,23 @@ async function main() {
     0
   );
 
-  const result = await createAccountTx.wait();
+  const result = await createAccountTx.wait(1);
   console.log(result);
   console.log("Account created:", createAccountTx);
+
+  let abi = ["event ContractCreated(address indexed contractAddress)"];
+  let iface = new ethers.utils.Interface(abi);
+
+  var logPromise = ethers.provider.getLogs();
+  logPromise
+    .then(function (logs) {
+      console.log("Printing array of events:");
+      let events = logs.map((log) => iface.parseLog(log));
+      console.log(events);
+    })
+    .catch(function (err) {
+      console.log(err);
+    });
 }
 
 main()
