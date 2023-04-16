@@ -11,10 +11,10 @@ import * as fs from "fs";
 const mnemonicFileName =
   process.env.MNEMONIC_FILE ??
   `${process.env.HOME}/.secret/testnet-mnemonic.txt`;
-let mnemonic =
-  "scatter layer proud able beef settle live letter trim blouse round what";
+let mnemonic = "scatter layer proud able beef settle live letter trim blouse round what";
 if (fs.existsSync(mnemonicFileName)) {
   mnemonic = fs.readFileSync(mnemonicFileName, "ascii");
+  console.log("THIS IS THE PROBLEM");
 }
 
 function getNetwork1(url: string): {
@@ -31,9 +31,7 @@ function getNetwork(name: string): {
   url: string;
   accounts: { mnemonic: string };
 } {
-  return getNetwork1(
-    "https://eth-goerli.g.alchemy.com/v2/odcNTn-vDXytmKwi7eZfOmeenf8heyLU"
-  );
+  return getNetwork1("https://goerli.infura.io/v3/e56c1c4fd344478faad7c794ea0d6139");
   // return getNetwork1(`wss://${name}.infura.io/ws/v3/${process.env.INFURA_ID}`)
 }
 
@@ -73,11 +71,7 @@ const config: HardhatUserConfig = {
   },
   mocha: {
     timeout: 10000,
-  },
-
-  etherscan: {
-    apiKey: process.env.ETHERSCAN_API_KEY,
-  },
+  }
 };
 
 // coverage chokes on the "compilers" settings

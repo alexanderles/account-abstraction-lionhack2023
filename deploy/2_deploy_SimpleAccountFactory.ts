@@ -6,7 +6,7 @@ const deploySimpleAccountFactory: DeployFunction = async function (
   hre: HardhatRuntimeEnvironment
 ) {
   const provider = ethers.provider;
-  const from = await provider.getSigner(19).getAddress();
+  const from = await provider.getSigner().getAddress();
 
   const entrypoint = await hre.deployments.get("EntryPoint");
   const ret = await hre.deployments.deploy("SimpleAccountFactory", {

@@ -6,6 +6,12 @@ import "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
 
 import "./CustomAccount.sol";
 
+// ZKaptcha anti-bot 
+interface ZKaptchaInterface {
+	function verifyZkProof(bytes calldata zkProof) external view returns (bool);
+}
+
+
 /**
  * A sample factory contract for SimpleAccount
  * A UserOperations "initCode" holds the address of the factory, and a method call (to createAccount, in this sample factory).
@@ -14,12 +20,14 @@ import "./CustomAccount.sol";
  */
 contract CustomAccountFactory {
     CustomAccount public accountImplementation;
-    IEntryPoint entryPoint;
+    IEntryPoint public entryPoint;
+    ZKaptchaInterface public zkaptcha;
     event ContractCreated(address indexed contractAddress);
 
     constructor(IEntryPoint _entryPoint) {
         // accountImplementation = new CustomAccount(_entryPoint, _owners, _requiredSigners);
         entryPoint = _entryPoint;
+        zkaptcha = ZKaptchaInterface(0xf5DCa59461adFFF5089BE5068364eC10B86c2a88); 
     }
 
     /**
@@ -31,8 +39,13 @@ contract CustomAccountFactory {
     function createAccount(
         address[] memory owners,
         uint requiredSigners,
-        uint256 salt
+        uint256 salt,
+        bytes32[] memory proof
     ) public returns (address contractAddr) {
+
+        // CHECK IF THE CAPTCHA IS VALID 
+        require(zkaptcha.verifyZkProof(abi.encodePacked(proof)), "invalid zkaptcha proof");
+
         address addr = getAddress(owners, salt);
         uint codeSize = addr.code.length;
         if (codeSize > 0) {
