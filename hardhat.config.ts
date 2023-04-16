@@ -31,7 +31,9 @@ function getNetwork(name: string): {
   url: string;
   accounts: { mnemonic: string };
 } {
-  return getNetwork1("https://goerli.infura.io/v3/e56c1c4fd344478faad7c794ea0d6139");
+  return getNetwork1(
+    "https://arb-goerli.g.alchemy.com/v2/f1sVfxf_KVNydUnaquw_CKTivzzbEfwb"
+  );
   // return getNetwork1(`wss://${name}.infura.io/ws/v3/${process.env.INFURA_ID}`)
 }
 
@@ -68,6 +70,8 @@ const config: HardhatUserConfig = {
     goerli: getNetwork("goerli"),
     sepolia: getNetwork("sepolia"),
     proxy: getNetwork1("http://localhost:8545"),
+    mumbai: getNetwork("mumbai"),
+    arb_goerli: getNetwork("arb-goerli"),
   },
   mocha: {
     timeout: 10000,

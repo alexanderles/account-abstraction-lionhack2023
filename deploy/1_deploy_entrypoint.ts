@@ -8,13 +8,13 @@ const deployEntryPoint: DeployFunction = async function (
 ) {
   const provider = ethers.provider;
   const from = await provider.getSigner().getAddress();
-  console.log("FROM:" + from);
-  await new Create2Factory(ethers.provider).deployFactory();
 
+  await new Create2Factory(ethers.provider).deployFactory();
+  console.log("FROM", from);
   const ret = await hre.deployments.deploy("EntryPoint", {
     from,
     args: [],
-    gasLimit: 4e6,
+    gasLimit: 6e6,
     deterministicDeployment: true,
   });
   console.log("==entrypoint addr=", ret.address);

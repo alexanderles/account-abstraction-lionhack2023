@@ -12,7 +12,7 @@ const deploySimpleAccountFactory: DeployFunction = async function (
   const ret = await hre.deployments.deploy("CustomAccountFactory", {
     from,
     args: [entrypoint.address],
-    gasLimit: 6e5,
+    gasLimit: 6e6,
     log: true,
     deterministicDeployment: true,
   });
