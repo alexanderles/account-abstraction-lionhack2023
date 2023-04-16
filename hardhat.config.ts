@@ -9,7 +9,7 @@ import 'solidity-coverage'
 import * as fs from 'fs'
 
 const mnemonicFileName = process.env.MNEMONIC_FILE ?? `${process.env.HOME}/.secret/testnet-mnemonic.txt`
-let mnemonic = 'test '.repeat(11) + 'junk'
+let mnemonic = 'REPLACE WITH MNUMONIC'
 if (fs.existsSync(mnemonicFileName)) { mnemonic = fs.readFileSync(mnemonicFileName, 'ascii') }
 
 function getNetwork1 (url: string): { url: string, accounts: { mnemonic: string } } {
@@ -20,7 +20,7 @@ function getNetwork1 (url: string): { url: string, accounts: { mnemonic: string 
 }
 
 function getNetwork (name: string): { url: string, accounts: { mnemonic: string } } {
-  return getNetwork1(`https://${name}.infura.io/v3/${process.env.INFURA_ID}`)
+  return getNetwork1('https://eth-goerli.g.alchemy.com/v2/odcNTn-vDXytmKwi7eZfOmeenf8heyLU')
   // return getNetwork1(`wss://${name}.infura.io/ws/v3/${process.env.INFURA_ID}`)
 }
 

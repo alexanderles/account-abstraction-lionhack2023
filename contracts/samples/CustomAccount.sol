@@ -21,13 +21,12 @@ import "./callback/TokenCallbackHandler.sol";
 contract CustomAccount is BaseAccount, TokenCallbackHandler, UUPSUpgradeable, Initializable {
     using ECDSA for bytes32;
 
-    event CustomAccountInitialized(IEntryPoint indexed entryPoint, address indexed owner);
+    event CustomAccountInitialized(IEntryPoint indexed entryPoint, address[] indexed owner);
     event Deposit(address indexed sender, uint amount);
     event Submit(uint indexed txId);
     event Approve(address indexed owner, uint indexed txId);
     event Revoke(address indexed owner, uint indexed txId);
     event Execute(uint indexed txId);
-
     struct Transaction {
         address to;
         uint value;
@@ -72,6 +71,31 @@ contract CustomAccount is BaseAccount, TokenCallbackHandler, UUPSUpgradeable, In
 
         // TODO: Remove this?
         _disableInitializers();
+    }
+
+    
+    /**
+     * @dev The _entryPoint member is immutable, to reduce gas consumption.  To upgrade EntryPoint,
+     * a new implementation of SimpleAccount must be deployed with the new EntryPoint address,) then upgrading
+      * the implementation by calling `upgradeTo(`
+     */
+    function initialize(address[] memory _owners) public virtual initializer {
+        _initialize(_owners);
+    }
+
+    function _initialize(address[] memory _owners) internal virtual {
+
+        for (uint i; i < _owners.length; i++) {
+            address owner = _owners[i];
+
+            require(owner != address(0), "invalid owner");
+            require(!isOwner[owner], "owner is not unique");
+
+            isOwner[owner] = true;
+            owners.push(owner);
+        }
+        emit CustomAccountInitialized(i_entryPoint,owners);
+
     }
 
     modifier requireFromThisOrOwner() {
