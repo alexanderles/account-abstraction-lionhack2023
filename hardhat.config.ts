@@ -11,7 +11,7 @@ import * as fs from "fs";
 const mnemonicFileName =
   process.env.MNEMONIC_FILE ??
   `${process.env.HOME}/.secret/testnet-mnemonic.txt`;
-let mnemonic = "scatter layer proud able beef settle live letter trim blouse round what";
+let mnemonic = "REPLACE";
 if (fs.existsSync(mnemonicFileName)) {
   mnemonic = fs.readFileSync(mnemonicFileName, "ascii");
   console.log("THIS IS THE PROBLEM");
